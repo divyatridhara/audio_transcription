@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="./speechRecognition.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Caveat:wght@400;700&family=Lobster&family=Monoton&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,700&family=Work+Sans:ital,wght@0,400;0,700;1,700&display=swap');
+
+         .body {
+            height: 90vh;
+            text-align: center;
+            padding: 100px 20px 20px 20px;
+            background-color: #ffdab9;
+        }
+        
+        .logo {
+            width: 90%;
+            border-radius: 0px;
+            height: 300px;
+            border-style: solid;
+            border-width: 0px;
+        }
+        
+        .current {
+            
+            border-radius: 20px;
+            padding: 10px 15px;
+        }
+        
+        .nava {
+            background-color: #ffa500;
+        }
+        
+        .nav-logo {
+            width: 40px;
+            border-radius: 10px;
+        }
+        
+        .div input {
+            background-color: skyblue;
+            color: black;
+        
+        }
+        
+        .label {
+            color: brown;
+            font-size: 20px;
+        }
+        #strat_button{
+            background-color: #ffa500;
+        }
+        #stop_button{
+            background-color: #ffa500;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="fixed-top navbar navbar-expand-lg navbar-dark nava">
+        <a class="navbar-brand" href="#">
+            <img class="nav-logo" src="https://designs.bobcares.com/wp-content/uploads/2018/01/Chat-room-presentation_new.png" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="audio%20transcription%20home.html">Home</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link active" href="#" id="TranscribeTag"> <span class="current" id="transcribeSpan">Transcribe</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="reportstag" href="#reports-area"><span id="reportsSpan">Reports</span></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="transcribe-area">
+        <div class="container-fluid body">
+            <div class="row">
+                <div class="col-12 text-center div">
+                    <label for="audioInput" class="label">Upload a file</label>
+                    <input class="shadow mb-2" type="file" name="audio" id="audioInput" accept="audio/*" value="" />
+                    <textarea name="textarea" id="textarea" rows="5" columns="30" class="form-control textarea"></textarea>
+                    <label class="label mt-2">OR <br />Click on start button to record</label>
+                    <br/>
+                    <img src="https://png.pngtree.com/png-clipart/20200701/original/pngtree-voice-chat-ripple-png-image_5405528.jpg" class="nav-logo" />
+                    <br/>   
+                    <button class="btn btn-primary button  mt-2 pl-5 pr-5" id="strat_button">start</button>
+                    <button class="btn btn-primary button d-none pl-5 pr-5" id="stop_button">stop</button>
+                </div>
+                <div id="audio" class="col-12">
+                    <!-- <h1 id="h">audio</h1> -->
+                    <audio>
+                        <source src="" id="src" />
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reports-area" class="d-nones">
+        <div class="container-fluid body">
+            <div class="row">
+                <legend class="text-white">Transcription Details</legend>
+                <table class="table text-white shadow" id="table">
+                    <tr class="shadow">
+                        <th>
+                            Time Took To Transcribe
+                        </th>
+                        <th>
+                            Date of Transcribe
+                        </th>
+                        <th>
+                            Text of Speech
+                        </th>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        let start_button = document.getElementById("strat_button");
+        let stop_button = document.getElementById("stop_button");
+        let textarea = document.getElementById("textarea");
+        let table = document.getElementById("table");
+        let speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let TranscribeTag = document.getElementById("TranscribeTag");
+        let reportsTag = document.getElementById("reportstag");
+        let reports_area = document.getElementById("reports-area");
+        let transcribe_area = document.getElementById("transcribe-area");
+        let reportsSpan = document.getElementById("reportsSpan");
+        let transcribeSpan = document.getElementById("transcribeSpan");
+
+        const recognition = new speechRecognition();
+        let transcript = null;
+
+        let audio = document.getElementById("audio");
+        let mainaudio = null;
+        let recorder = null;
+        let device = navigator.mediaDevices.getUserMedia({
+            audio: true
+        });
+        let items = [];
+        let a = null;
+        let transcriptionDetails = JSON.parse(localStorage.getItem("transcriptionDetails"));
+        //let transcriptDetails = []
+        //if transcriptionDetails==null{transcriptionDetails=[]}
+        let time = null;
+        let text = null;
+        let date = null;
+        let count = 0;
+
+        let obj = {
+            time: null,
+            date: null,
+            text: null
+        };
+
+
+        function addRow(time, date, text) {
+            let row = document.createElement("tr");
+            table.appendChild(row);
+            let tdTime = document.createElement("td");
+            tdTime.textContent = date;
+            row.appendChild(tdTime);
+            let tddate = document.createElement("td");
+            tddate.textContent = date;
+            row.appendChild(tddate);
+            let tdtext = document.createElement("td");
+            tdtext.textContent = text;
+            row.appendChild(tdtext);
+        }
+
+        start_button.addEventListener("click", function() {
+
+            device.then(stream => {
+                let recorder = new MediaRecorder(stream);
+
+                recorder.ondataavailable = e => {
+                    items.push(e.data);
+                    if (recorder.state === "inactive") {
+
+                        var blob = new Blob(items, {
+                            type: 'audio/webm'
+                        });
+                        let audio = document.getElementById("audio");
+
+                        let mainaudio = document.createElement("audio");
+                        mainaudio.id = "recorded_audio";
+                        mainaudio.setAttribute('controls', 'controls');
+                        audio.appendChild(mainaudio);
+                        mainaudio.innerHTML = '<source src="' + URL.createObjectURL(blob) + '" type="video/webm" />';
+                        let fir = document.getElementById("src");
+                        fir.src = URL.createObjectURL(blob);
+                    }
+                };
+                recorder.start(100);
+                a = setInterval(function() {
+                    count = count + 1;
+                }, 1000);
+                stop_button.addEventListener("click", function() {
+                    recorder.stop();
+                    recorder.state = "inactive";
+                });
+            });
+
+            stop_button.classList.remove("d-none");
+            start_button.classList.add("d-none");
+            var speech = true;
+            recognition.interimResults = true;
+
+            recognition.addEventListener("result", e => {
+                transcript = Array.from(e.results)
+                    .map(result => result[0])
+                    .map(results => results.transcript);
+            });
+
+            if (speech === true) {
+                recognition.start();
+            }
+
+        });
+
+        stop_button.addEventListener("click", function() {
+            clearInterval(a);
+            textarea.textContent = transcript;
+            obj.time = count;
+            obj.text = transcript.join(", ");
+            let currentDate = new Date();
+            obj.date = currentDate.getHours() + ":" + currentDate.getMinutes() + " / " + currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate();
+            transcriptionDetails.push(obj);
+            console.log(transcriptionDetails);
+            localStorage.setItem("transcriptionDetails", JSON.stringify(transcriptionDetails));
+            recognition.stop();
+            stop_button.classList.add("d-none");
+            start_button.classList.remove("d-none");
+            addRow(obj.time, obj.date, obj.text);
+        });
+
+        for (let i of transcriptionDetails) {
+            addRow();
+            addRow(i.time, i.date, i.text);
+        }
+
+        reportsTag.addEventListener("click", function() {
+            transcribe_area.classList.add("d-none");
+            reports_area.classList.remove("d-none");
+            reportsSpan.classList.add("current");
+            reportsSpan.classList.add("active");
+            transcribeSpan.classList.remove("current");
+            reportsTag.classList.add("active");
+            TranscribeTag.classList.remove("active");
+        });
+
+        TranscribeTag.addEventListener("click", function() {
+            transcribe_area.classList.remove("d-none");
+            reports_area.classList.add("d-none");
+            reportsSpan.classList.remove("current");
+            reportsSpan.classList.remove("active");
+            transcribeSpan.classList.add("current");
+            reportsTag.classList.remove("active");
+            TranscribeTag.classList.add("active");
+        });
+    </script>
+</body>
+
+</html>
